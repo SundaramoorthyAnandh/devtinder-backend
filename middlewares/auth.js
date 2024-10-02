@@ -1,7 +1,7 @@
 const adminAuth = (req, resp, next) => {
   const token = 'qw12rt45';
 
-  const isAdminAuthOk = token === 'qw12rfdt45';
+  const isAdminAuthOk = token === 'qw12rt45';
 
   console.log('Admin auth is in progress...');
 

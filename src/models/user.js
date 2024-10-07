@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validate = require('validator');
 
 const userSchema = new mongoose.Schema(
   {
@@ -14,6 +15,14 @@ const userSchema = new mongoose.Schema(
       maxlength: [40, 'Last Name cannot be over 40 characters'],
       trim: true,
     },
+    userName: {
+      type: String,
+      maxlength: [40, 'User Name cannot be over 40 characters'],
+      trim: true,
+      default: function () {
+        return `${this.firstName} ${this.lastName}`
+      },
+    },
     email: {
       type: String,
       required: [true, 'Email is required'],
@@ -22,8 +31,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       validate: {
         validator: function (v) {
-          // Simple email regex pattern
-          return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v);
+          return validate.isEmail(v);
         },
         message: (props) => `${props.value} is not a valid email address!`,
       },
@@ -34,9 +42,13 @@ const userSchema = new mongoose.Schema(
       minlength: [8, 'Password must be at least 8 characters long'],
       validate: {
         validator: function (pwd) {
-          const passwordRegex =
-            /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
-          return passwordRegex.test(pwd);
+          return validate.isStrongPassword(pwd, {
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols: 1,
+          });
         },
         message:
           'Password must be at least 8 characters long, including 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.',
@@ -64,6 +76,12 @@ const userSchema = new mongoose.Schema(
     },
     photoUrl: {
       type: String,
+      validate: {
+        validator: function (url) {
+          return validate.isURL(url);
+        },
+        message: (props) => `${props.value} is not a valid URL!`,
+      },
       default:
         'https://png.pngtree.com/png-clipart/20191122/original/pngtree-user-icon-isolated-on-abstract-background-png-image_5192004.jpg',
     },

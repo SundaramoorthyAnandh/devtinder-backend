@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt');
 const validator = require('validator');
+const { fieldsValidator } = require('./fieldsValidation');
 
-const ALLOWED_FIELDS = [
+const ALLOWED_SIGNUP_FIELDS = [
   'firstName',
   'lastName',
   'email',
@@ -11,6 +12,8 @@ const ALLOWED_FIELDS = [
   'userName',
   'photoUrl',
   'gender',
+  'about',
+  'profession',
 ];
 
 const sanitizeSignupData = (userData) => {
@@ -26,21 +29,15 @@ const sanitizeSignupData = (userData) => {
 };
 
 const validateSignupData = (signupData) => {
-  const { firstName, email, password, age, skills } = signupData;
+  const isSignUpAllowed = Object.keys(signupData).every((field) =>
+    ALLOWED_SIGNUP_FIELDS.includes(field)
+  );
 
-  if (!firstName) {
-    throw new Error('First Name cannot be empty');
-  } else if (!validator.isEmail(email)) {
-    throw new Error('Invalid email format');
-  } else if (!validator.isStrongPassword(password)) {
-    throw new Error('Password is too week');
-  } else if (!validator.isNumeric(age)) {
-    throw new Error('Age should be a number');
-  } else if (age < 18) {
-    throw new Error('Minimum age requirement is 18');
-  } else if (skills.length < 3 || skills.length > 10) {
-    throw new Error('Number of skills should be between 3 and 10');
+  if (!isSignUpAllowed) {
+    throw new Error('Problem signing up');
   }
+
+  fieldsValidator(signupData);
 
   return true;
 };

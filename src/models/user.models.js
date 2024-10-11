@@ -20,7 +20,21 @@ const userSchema = new mongoose.Schema(
       maxlength: [40, 'User Name cannot be over 40 characters'],
       trim: true,
       default: function () {
-        return `${this.firstName} ${this.lastName}`
+        return `${this.firstName} ${this.lastName ?? ''}`;
+      },
+    },
+    profession: {
+      type: String,
+      maxlength: [100, 'Profession cannot be over 40 characters'],
+      trim: true,
+      required: true,
+    },
+    about: {
+      type: String,
+      maxlength: [1000, 'About cannot be more than 1000 characters'],
+      trim: true,
+      default: function () {
+        return `I'm ${this.firstName} working as ${this.profession}`;
       },
     },
     email: {

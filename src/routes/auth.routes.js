@@ -74,7 +74,10 @@ authRouter.post('/api/v1/login', async (req, res) => {
 
             res.cookie('authToken', authToken, {
                 maxAge: 1 * 24 * 60 * 60 * 1000, // 24 hrs
-            }).send('Login Successful');
+            }).json({
+                message: 'Login Successful',
+                data: registeredDbUser,
+            });
         } else {
             throw new Error('Invalid Credentials');
         }

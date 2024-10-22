@@ -87,13 +87,24 @@ profileRouter.post(
     }
 );
 
-// profileRouter.put("/api/v1/user/preferences/edit", async (req, res) => {
-//   try {
-//     // preferences edit logic
-//   } catch (error) {
-//     res.status(400).send("Error ::" + error.message);
-//   }
-// });
+profileRouter.get('/api/v1/user/preferences/view', async (req, res) => {
+    try {
+        const preferences = await Preferences.findOne({
+            userId: req._id,
+        });
+
+        if (!preferences) {
+            throw new Error('Cannot fetch Preferences');
+        }
+
+        res.status(200).json({
+            message: 'fetched preferences sucessfully',
+            data: preferences,
+        });
+    } catch (error) {
+        res.status(400).send('Error ::' + error.message);
+    }
+});
 
 profileRouter.delete(
     '/api/v1/profile/deactivate',

@@ -1,7 +1,5 @@
 const express = require('express');
 const { userAuth } = require('../../middlewares/auth');
-const User = require('../models/user.models');
-const validate = require('validator');
 const ConnectionRequest = require('../models/connectionRequest.models');
 
 const requestRouter = express.Router();
@@ -79,22 +77,50 @@ requestRouter.post(
     }
 );
 
-//POST accept your incoming req
-requestRouter.post('/api/v1/request/accept', async (req, res) => {
-    try {
-        // logic for accepting others request
-    } catch (error) {
-        res.status(400).send('Error ::' + error.message);
-    }
-});
+//POST accept or reject your incoming req
+requestRouter.post(
+    '/api/v1/request/:status/:connectionRequestId',
+    async (req, res) => {
+        try {
+            const { status, connectionRequestId } = req.params;
+            const loggedInUserId = req._id;
 
-//POST reject your incoming req
-requestRouter.post('/api/v1/request/reject', async (req, res) => {
-    try {
-        // logic for rejecting others request
-    } catch (error) {
-        res.status(400).send('Error ::' + error.message);
+            const ALLOWED_ACTIONS = ['accepted', 'rejected'];
+
+            // check for allowed actions
+            if (!ALLOWED_ACTIONS.includes(status)) {
+                throw new Error(`Status not allowed - ${status}`);
+            }
+
+            // check connection req id is valid
+            // check toUserId is loggedin user id, because other users send request TO the current loggedin user
+            // check if status of the request is interested
+
+            const connectionRequest = await ConnectionRequest.findOne({
+                _id: connectionRequestId,
+                toUserId: loggedInUserId,
+                status: 'interested',
+            });
+
+            if (!connectionRequest) {
+                return res.status(404).json({
+                    message: 'Invalid Connection Request',
+                });
+            }
+
+            // if connection req exist, change status to accepted
+            connectionRequest.status = 'accepted';
+
+            const data = await connectionRequest.save();
+
+            res.status(200).json({
+                message: 'Accepted the request successfully',
+                data,
+            });
+        } catch (error) {
+            res.status(400).send('Error ::' + error.message);
+        }
     }
-});
+);
 
 module.exports = requestRouter;

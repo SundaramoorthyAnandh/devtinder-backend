@@ -5,10 +5,14 @@ const connectionRequestSchema = new mongoose.Schema(
         fromUserId: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
+            ref: 'User',
+            // we do refer the User collection
+            // and saying that fromUserId data is available in User collection
         },
         toUserId: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
+            ref: 'User',
         },
         status: {
             type: String,

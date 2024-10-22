@@ -20,6 +20,7 @@ const preferencesSchema = mongoose.Schema(
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
+            unique: true,
             index: true,
             // single field indexed because we always fetch preferences of user by querying with userId
         },

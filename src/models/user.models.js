@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validate = require('validator');
+const { GENDERS } = require('../utils/constants');
 
 const userSchema = new mongoose.Schema(
     {
@@ -73,7 +74,7 @@ const userSchema = new mongoose.Schema(
         },
         gender: {
             type: String,
-            enum: ['Male', 'Female', 'Others'],
+            enum: GENDERS,
             default: 'Others',
         },
         age: {

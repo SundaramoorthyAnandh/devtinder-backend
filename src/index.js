@@ -4,8 +4,9 @@ const cookieParser = require('cookie-parser');
 const {
     authRouter,
     profileRouter,
-    usersRouter,
+    userRouter,
     requestRouter,
+    feedRouter,
 } = require('./routes');
 
 const app = express();
@@ -14,7 +15,7 @@ const app = express();
 // Chaining cookie parser
 app.use([express.json(), cookieParser()]);
 
-app.use('/', authRouter, profileRouter, usersRouter, requestRouter);
+app.use('/', authRouter, profileRouter, userRouter, requestRouter, feedRouter);
 
 connect2Db()
     .then(() => {

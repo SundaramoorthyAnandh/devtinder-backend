@@ -8,6 +8,9 @@ const {
     requestRouter,
     feedRouter,
 } = require('./routes');
+const dotenv = require('dotenv');
+dotenv.config();
+const process = require('node:process');
 
 const app = express();
 
@@ -21,8 +24,8 @@ connect2Db()
     .then(() => {
         console.log('Connected to DB successfully');
 
-        app.listen(3000, () => {
-            console.log('Server listening on port 3000');
+        app.listen(process.env.PORT, () => {
+            console.log(`Server listening on port ${process.env.PORT}`);
         });
     })
     .catch((err) => console.error(err));

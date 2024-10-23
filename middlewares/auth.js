@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const process = require('node:process');
 
 const userAuth = async (req, resp, next) => {
     try {
@@ -11,7 +12,7 @@ const userAuth = async (req, resp, next) => {
             resp.status(401).send('Invalid token. User not authorized');
         }
 
-        const { _id } = await jwt.verify(authToken, 'SAJTSK@959924');
+        const { _id } = await jwt.verify(authToken, process.env.JWT_SECRET);
 
         if (_id) {
             // attaching "_id" to response and sending it to next middleware

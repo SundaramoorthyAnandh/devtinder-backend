@@ -8,6 +8,7 @@ const User = require('../models/user.models');
 const validate = require('validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const process = require('node:process');
 
 const authRouter = express.Router();
 
@@ -66,7 +67,7 @@ authRouter.post('/api/v1/login', async (req, res) => {
         if (allowLogin) {
             const authToken = jwt.sign(
                 { _id: registeredDbUser._id },
-                'SAJTSK@959924', // secret
+                process.env.JWT_SECRET, // secret
                 {
                     expiresIn: '1d',
                 }

@@ -50,10 +50,6 @@ const fieldsValidator = (data) => {
                 validateEmail(data[field]);
                 return true;
             }
-            case 'firstName': {
-                validateFirstName(data[field]);
-                return true;
-            }
             case 'profession': {
                 validateProfession(data[field]);
                 return true;

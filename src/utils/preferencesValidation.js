@@ -1,5 +1,4 @@
 const validator = require('validator');
-const ALLOWED_PREFERENCES_FIELDS = ['age', 'gender', 'skills', 'userId'];
 const ALLOWED_GENDER = ['male', 'female', 'all'];
 
 const preferencesValidator = (data) => {
@@ -17,7 +16,7 @@ const preferencesValidator = (data) => {
                 validateGender(data[field]);
                 return true;
             }
-            case 'userId': {
+            case '_id': {
                 validateUserId(data[field]);
                 return true;
             }

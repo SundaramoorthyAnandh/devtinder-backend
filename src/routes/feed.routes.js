@@ -20,7 +20,7 @@ feedRouter.get('/api/v1/feed', async (req, res) => {
         });
 
         if (!preferences) {
-            return res.send(404).json({
+            return res.status(404).json({
                 message: 'Preferences not found for loggedin user',
             });
         }

@@ -41,7 +41,10 @@ profileRouter.patch('/api/v1/profile/edit', userAuth, async (req, res) => {
             user: updatedUser,
         });
     } catch (error) {
-        res.status(400).send('Error updating users');
+        res.status(400).json({
+            error,
+            message: 'Error while updating user profile',
+        });
     }
 });
 
@@ -65,7 +68,10 @@ profileRouter.post(
                 throw new Error('Cannot add preferences of an invalid User Id');
             }
         } catch (error) {
-            res.status(400).send('Error ::' + error.message);
+            res.status(400).json({
+                error,
+                message: 'Error while updating user preferences',
+            });
         }
     }
 );
@@ -83,7 +89,10 @@ profileRouter.get('/api/v1/user/preferences/view', async (req, res) => {
             data: preferences,
         });
     } catch (error) {
-        res.status(400).send('Error ::' + error.message);
+        res.status(400).json({
+            error,
+            message: 'Error while getting user preferences',
+        });
     }
 });
 
@@ -94,13 +103,15 @@ profileRouter.delete(
         try {
             // deactivate user logic
         } catch (error) {
-            res.status(400).send('Error ::' + error.message);
+            res.status(400).json({
+                error,
+                message: 'Error while deactivating user',
+            });
         }
     }
 );
 
 const updatePreferences = async (userId, modifiedPrefs = {}) => {
-    console.log('updatePreferences ::', updatePreferences);
     try {
         const prefs = await Preferences.findByIdAndUpdate(
             userId,
@@ -116,7 +127,7 @@ const updatePreferences = async (userId, modifiedPrefs = {}) => {
 
         return prefs;
     } catch (error) {
-        throw new Error('Error while updating preferences', error);
+        throw new Error('Cannot update preferences', error);
     }
 };
 

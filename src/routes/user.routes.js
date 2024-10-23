@@ -24,7 +24,7 @@ userRouter.get('/api/v1/user/requests/received', async (req, res) => {
                 updatedAt: -1,
             }
             // Or string 'fromUserId updatedAt' defaulting both fields as ASC
-        ).populate('fromUserId', ['firstName', 'lastName', 'photoUrl']);
+        ).populate('fromUserId', USER_SAFE_FIELDS);
         // first arg - populating the ref of fromUserId from Users collection
         // second arg - limit fields of User schema - can be an array or string with fields separated with space
 

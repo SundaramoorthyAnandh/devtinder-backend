@@ -1,4 +1,4 @@
-const USER_SAFE_FIELDS = ['firstName', 'lastName', 'photoUrl', 'age'];
+const USER_SAFE_FIELDS = ['firstName', 'lastName', 'photoUrl', 'age', 'skills'];
 const GENDERS = ['Male', 'Female', 'Others'];
 
 module.exports = {

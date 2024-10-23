@@ -2,7 +2,7 @@ const express = require('express');
 const { userAuth } = require('../../middlewares/auth');
 const User = require('../models/user.models');
 const validate = require('validator');
-const Preference = require('../models/preferences.models');
+const Preferences = require('../models/preferences.models');
 const { GENDERS, USER_SAFE_FIELDS } = require('../utils/constants');
 const ConnectionRequest = require('../models/connectionRequest.models');
 
@@ -15,9 +15,15 @@ feedRouter.get('/api/v1/feed', async (req, res) => {
     try {
         const loggedinUserId = req._id;
 
-        const preferences = await Preference.findOne({
-            userId: loggedinUserId,
+        const preferences = await Preferences.findOne({
+            _id: loggedinUserId,
         });
+
+        if (!preferences) {
+            return res.send(404).json({
+                message: 'Preferences not found for loggedin user',
+            });
+        }
 
         const { page = 1, pageSize = 10 } = req.query;
 
@@ -56,13 +62,9 @@ feedRouter.get('/api/v1/feed', async (req, res) => {
             usersToHide.add(connection.toUserId.toString());
         });
 
-        console.log(usersToHide);
         const filterQueryBasedOnPreferences = {
             age: {
                 $gte: preferences.age,
-            },
-            skills: {
-                $in: preferences.skills,
             },
             gender: {
                 $in: genderPreferences,
@@ -73,6 +75,11 @@ feedRouter.get('/api/v1/feed', async (req, res) => {
                     ...Array.from(usersToHide),
                 ],
             },
+            ...(preferences.skills.length > 0 && {
+                skills: {
+                    $in: preferences.skills,
+                },
+            }),
         };
 
         const matchedUsersCount = await User.countDocuments(

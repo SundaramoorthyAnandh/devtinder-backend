@@ -45,14 +45,6 @@ profileRouter.patch('/api/v1/profile/edit', userAuth, async (req, res) => {
     }
 });
 
-profileRouter.get('/api/v1/user/preferences', async (req, res) => {
-    try {
-        // preferences logic
-    } catch (error) {
-        res.status(400).send('Error ::' + error.message);
-    }
-});
-
 profileRouter.post(
     '/api/v1/user/preferences/edit',
     userAuth,
@@ -63,16 +55,7 @@ profileRouter.post(
             console.log(validData);
 
             if (validator.isMongoId(req._id)) {
-                const updatedPrefs = await Preferences.findOneAndUpdate(
-                    {
-                        userId: req._id,
-                    },
-                    req.body,
-                    {
-                        upsert: true,
-                        returnDocument: 'after',
-                    }
-                );
+                const updatedPrefs = await updatePreferences(req._id, req.body);
 
                 return res.status(201).json({
                     message: 'Preferences added successfully',
@@ -89,9 +72,7 @@ profileRouter.post(
 
 profileRouter.get('/api/v1/user/preferences/view', async (req, res) => {
     try {
-        const preferences = await Preferences.findOne({
-            userId: req._id,
-        });
+        const preferences = await Preferences.findById(req._id);
 
         if (!preferences) {
             throw new Error('Cannot fetch Preferences');
@@ -118,4 +99,25 @@ profileRouter.delete(
     }
 );
 
-module.exports = profileRouter;
+const updatePreferences = async (userId, modifiedPrefs = {}) => {
+    console.log('updatePreferences ::', updatePreferences);
+    try {
+        const prefs = await Preferences.findByIdAndUpdate(
+            userId,
+            {
+                _id: userId,
+                ...modifiedPrefs,
+            },
+            {
+                upsert: true, // insert if not found
+                returnDocument: 'after',
+            }
+        );
+
+        return prefs;
+    } catch (error) {
+        throw new Error('Error while updating preferences', error);
+    }
+};
+
+module.exports = { profileRouter, updatePreferences };

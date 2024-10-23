@@ -2,9 +2,15 @@ const mongoose = require('mongoose');
 
 const preferencesSchema = mongoose.Schema(
     {
+        _id: {
+            type: mongoose.Schema.Types.ObjectId, // Same _id as User
+            ref: 'User',
+            required: true,
+        },
         age: {
             type: Number,
             required: true,
+            default: 18,
             min: 18,
         },
         gender: {
@@ -15,6 +21,7 @@ const preferencesSchema = mongoose.Schema(
         },
         skills: {
             type: [String],
+            default: [],
             required: true,
         },
         userId: {
@@ -30,5 +37,6 @@ const preferencesSchema = mongoose.Schema(
         validateBeforeSave: true,
     }
 );
+const Preferences = mongoose.model('Preferences', preferencesSchema);
 
-module.exports = mongoose.model('Preferences', preferencesSchema);
+module.exports = Preferences;

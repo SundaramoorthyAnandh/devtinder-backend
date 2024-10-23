@@ -9,6 +9,7 @@ const validate = require('validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const process = require('node:process');
+const { updatePreferences } = require('./profile.routes');
 
 const authRouter = express.Router();
 
@@ -29,11 +30,15 @@ authRouter.post('/api/v1/signup', async (req, res) => {
         // creating instance of a User data
         const newUser = new User(signupData);
 
-        await newUser.save();
+        const savedUser = await newUser.save();
+
+        // create preferences once user is created
+        const prefs = await updatePreferences(savedUser._id);
 
         res.status(201).json({
             message: 'User created successfully',
             user: newUser,
+            prefs,
         });
     } catch (error) {
         res.status(400).send(

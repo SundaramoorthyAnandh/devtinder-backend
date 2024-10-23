@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const process = require('node:process');
 const { updatePreferences } = require('./profile.routes');
+const { USER_SAFE_FIELDS } = require('../utils/constants');
 
 const authRouter = express.Router();
 
@@ -78,11 +79,19 @@ authRouter.post('/api/v1/login', async (req, res) => {
                 }
             );
 
+            const data = {};
+
+            for (const key in registeredDbUser) {
+                if (USER_SAFE_FIELDS.includes(key)) {
+                    data[key] = registeredDbUser[key];
+                }
+            }
+
             res.cookie('authToken', authToken, {
                 maxAge: 1 * 24 * 60 * 60 * 1000, // 24 hrs
             }).json({
                 message: 'Login Successful',
-                data: registeredDbUser,
+                data,
             });
         } else {
             throw new Error('Invalid Credentials');
